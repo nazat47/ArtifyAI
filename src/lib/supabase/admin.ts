@@ -1,7 +1,7 @@
 import { toDateTime } from "@/lib/helpers";
 import { stripe } from "@/lib/stripe/config";
 import Stripe from "stripe";
-import type { Database, Json, Tables, TablesInsert } from "@datatypes.types";
+import type { Json, Tables, TablesInsert } from "@datatypes.types";
 
 type Product = Tables<"products">;
 type Price = Tables<"prices">;
@@ -38,7 +38,7 @@ const upsertPriceRecord = async (
   retryCount = 0,
   maxRetries = 3
 ) => {
-  const priceData: Price = {
+  const priceData: Partial<Price> = {
     id: price.id,
     product_id: typeof price.product === "string" ? price.product : "",
     active: price.active,
@@ -236,6 +236,7 @@ const manageSubscriptionStatusChange = async (
     id: subscription.id,
     user_id: uuid,
     metadata: subscription.metadata,
+    //@ts-ignore
     status: subscription.status,
     price_id: subscription.items.data[0].price.id,
     //TODO check quantity on subscription
